@@ -23,7 +23,7 @@ def sendEmail(msg):
     server = smtplib.SMTP('smtp.gmail.com:587')
     server.starttls()
     server.ehlo()
-    server.login("alertserverproblem@gmail.com", "mamradckfischer")
+    server.login("alertserverproblem@gmail.com", "")
     server.sendmail(fromx, to, msg.as_string())
     server.quit()
 
