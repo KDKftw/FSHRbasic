@@ -6,7 +6,17 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 import smtplib, ssl
 from email.mime.text import MIMEText
-driver = webdriver.Chrome(executable_path=r"C:\Users\KDK\Desktop\Selenium setup\chromedriver90.exe")
+
+
+def acceptConsent():
+    def expand_shadow_element(element):
+        shadow_root = driver.execute_script('return arguments[0].shadowRoot', element)
+        return shadow_root
+
+    outer = expand_shadow_element(driver.find_element_by_css_selector("div#usercentrics-root"))
+    inner = outer.find_element_by_css_selector("button[data-testid='uc-accept-all-button']")
+    inner.click()
+driver = webdriver.Chrome(executable_path=r"C:\Users\KDK\Desktop\Selenium setup\chromedriver92.exe")
 URL = "https://www.fischer.cz"
 URL_faq = URL+"/faq"
 from selenium.webdriver.support import expected_conditions as EC
@@ -31,6 +41,8 @@ def sendEmail(msg):
 
 def test_HomePage():
     driver.get(URL)
+    time.sleep(2.5)
+    acceptConsent()
     try:
         bannerSingle = driver.find_element_by_xpath("//*[@class='f_teaser-item']")
         bannerAll = driver.find_elements_by_xpath("//*[@class='f_teaser-item']")
