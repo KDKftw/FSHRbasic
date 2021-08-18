@@ -6,46 +6,57 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 import smtplib, ssl
 from email.mime.text import MIMEText
-driver = webdriver.Ie(executable_path=r"C:\Users\KDK\Desktop\IEdriver\IEDriverServer.exe")
-
-def acceptConsent():
-    def expand_shadow_element(element):
-        shadow_root = driver.execute_script('return arguments[0].shadowRoot', element)
-        return shadow_root
-    try:
-        outer = expand_shadow_element(driver.find_element_by_css_selector("div#usercentrics-root"))
-        inner = outer.find_element_by_css_selector("button[data-testid='uc-accept-all-button']")
-        inner.click()
-    except NoSuchElementException:
-        pass
-
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from import_this import acceptConsent, sendEmail
 ##driver = webdriver.Chrome(executable_path=r"C:\Users\KDK\Desktop\Selenium setup\chromedriver92.exe")
+from threading import Thread
+
+
+from threading import Thread
+from time import sleep
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 URL = "https://www.fischer.cz"
 URL_faq = URL+"/faq"
 from selenium.webdriver.support import expected_conditions as EC
-wait = WebDriverWait(driver, 1500)
 
-def sendEmail(msg):
-    fromx = 'alertserverproblem@gmail.com'
-    to = 'ooo.kadoun@gmail.com'
-    msg = MIMEText(msg)
-    msg['Subject'] = "SRWEB1"
-    msg['From'] = fromx
-    msg['To'] = to
+caps=[{
+      'os_version': 'Mavericks',
+      'os': 'OS X',
+      'browser': 'safari',
+      'browser_version': '7.1',
+      'name': 'Parallel Test1', # test name
+      'build': 'browserstack-build-1' # Your tests will be organized within this build
+      },
+      {
+      'os_version': '10',
+      'os': 'Windows',
+      'browser': 'ie',
+      'browser_version': '11.0',
+      'name': 'Parallel Test2',
+      'build': 'browserstack-build-1'
+      },
+      {
+      'os_version': 'Big Sur',
+      'os': 'OS X',
+      'browser': 'safari',
+      'browser_version': 'latest',
+      'name': 'Parallel Test3',
+      'build': 'browserstack-build-1'
+}]
 
-    server = smtplib.SMTP('smtp.gmail.com:587')
-    server.starttls()
-    server.ehlo()
-    server.login("alertserverproblem@gmail.com", "")
-    server.sendmail(fromx, to, msg.as_string())
-    server.quit()
-
-
-
-def test_HomePage():
+def test_HomePage(desired_cap):
+    driver = webdriver.Remote(
+        ',
+        desired_capabilities=desired_cap)
+    wait = WebDriverWait(driver, 1500)
     driver.get(URL)
     time.sleep(2.5)
-    acceptConsent()
+    acceptConsent(driver)
     try:
         bannerSingle = driver.find_element_by_xpath("//*[@class='f_teaser-item']")
         bannerAll = driver.find_elements_by_xpath("//*[@class='f_teaser-item']")
@@ -108,6 +119,8 @@ def test_HomePage():
         sendEmail(msg)
 
 
+
     driver.quit()
 
-test_HomePage()
+for cap in caps:
+        Thread(target=test_HomePage, args=(cap,)).start()
