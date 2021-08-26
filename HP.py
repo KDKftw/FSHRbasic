@@ -51,7 +51,7 @@ caps=[{
 
 def test_HomePage(desired_cap):
     driver = webdriver.Remote(
-        ',
+        command_executor='',
         desired_capabilities=desired_cap)
     wait = WebDriverWait(driver, 1500)
     driver.get(URL)
