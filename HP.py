@@ -20,9 +20,10 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-URL = "https://www.fischer.cz"
+URL = "https://www.eximtours.cz"
 URL_faq = URL+"/faq"
 from selenium.webdriver.support import expected_conditions as EC
+from to_import_secret import sendEmail, comandExecutor
 
 caps=[{
       'os_version': 'Mavericks',
@@ -49,9 +50,9 @@ caps=[{
       'build': 'browserstack-build-1'
 }]
 
-def test_HomePage(desired_cap):
+def HomePage(desired_cap):
     driver = webdriver.Remote(
-        command_executor='',
+        command_executor=comandExecutor,
         desired_capabilities=desired_cap)
     wait = WebDriverWait(driver, 1500)
     driver.get(URL)
@@ -123,4 +124,4 @@ def test_HomePage(desired_cap):
     driver.quit()
 
 for cap in caps:
-        Thread(target=test_HomePage, args=(cap,)).start()
+        Thread(target=HomePage, args=(cap,)).start()
